@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Controle de Acesso</title>
+  <meta name="description" content="Registo digital de entradas e saídas de pessoas e veículos numa portaria. PWA com modo offline." />
+  <meta name="theme-color" content="#1b2127" />
+
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Controle de Acesso" />
+
+  <link rel="preload" href="assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <a class="salto" href="#principal">Ir para o conteúdo</a>
+
+  <!-- Sprite de ícones (linha 1.75px, estilo uniforme) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.4 2.9 8 7 9.5 4.1-1.5 7-5.1 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></symbol>
+      <symbol id="i-entrada" viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M4 12h11"/><path d="m11 8 4 4-4 4"/></symbol>
+      <symbol id="i-saida" viewBox="0 0 24 24"><path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"/><path d="M9 12h11"/><path d="m16 8 4 4-4 4"/></symbol>
+      <symbol id="i-lista" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+      <symbol id="i-pessoas" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.4-3.2 2.7-5 5.5-5s5.1 1.8 5.5 5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.5 14.3c1.8.5 3 2.2 3.3 4.7"/></symbol>
+      <symbol id="i-baixar" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></symbol>
+      <symbol id="i-imprimir" viewBox="0 0 24 24"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v6H7z"/></symbol>
+      <symbol id="i-subir" viewBox="0 0 24 24"><path d="M12 16V5"/><path d="m7.5 9 4.5-4.5L16.5 9"/><path d="M5 19h14"/></symbol>
+      <symbol id="i-remover" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M9 7V4h6v3"/><path d="M7 7l1 13h8l1-13"/></symbol>
+      <symbol id="i-aviso" viewBox="0 0 24 24"><path d="M12 4 2.8 19.5h18.4L12 4Z"/><path d="M12 10v4.5M12 17.3h.01"/></symbol>
+      <symbol id="i-certo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.3 2.4 2.4 4.6-5"/></symbol>
+      <symbol id="i-fora" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ===== Login ===== -->
+  <section id="vista-login" class="login" hidden>
+    <div class="login__painel">
+      <div class="marca marca--grande">
+        <svg class="icone" aria-hidden="true"><use href="#i-escudo" /></svg>
+        <span>Controle de Acesso</span>
+      </div>
+      <h1 class="login__titulo">Entradas e saídas da portaria, num só registo.</h1>
+      <p class="login__texto">Registe pessoas e veículos, confira quem está autorizado e saiba em cada momento quem está dentro.</p>
+      <div class="barreira" aria-hidden="true"></div>
+    </div>
+
+    <form id="form-login" class="login__form" novalidate>
+      <h2>Entrar</h2>
+      <p id="aviso-demo" class="nota nota--demo" hidden>
+        Modo demonstração. Os dados ficam só neste navegador.<br />
+        <button type="button" class="link" id="btn-preencher-demo">Preencher com a conta de demonstração</button>
+      </p>
+      <div class="campo">
+        <label for="login-email">E-mail</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" required />
+      </div>
+      <div class="campo">
+        <label for="login-senha">Senha</label>
+        <input id="login-senha" name="senha" type="password" autocomplete="current-password" required minlength="6" />
+      </div>
+      <p id="login-erro" class="erro" role="alert" hidden></p>
+      <button class="btn btn--primario btn--bloco" type="submit" id="btn-login">Entrar</button>
+      <p class="nota">As contas são criadas por quem administra o sistema. Não há registo público.</p>
+    </form>
+  </section>
+
+  <!-- ===== Aplicação ===== -->
+  <div id="vista-app" hidden>
+    <header class="topo">
+      <div class="marca">
+        <svg class="icone" aria-hidden="true"><use href="#i-escudo" /></svg>
+        <span>Controle de Acesso</span>
+      </div>
+
+      <nav class="abas" aria-label="Secções">
+        <button class="aba" data-aba="registar" aria-current="page" type="button">
+          <svg class="icone" aria-hidden="true"><use href="#i-entrada" /></svg><span>Registar</span>
+        </button>
+        <button class="aba" data-aba="historico" type="button">
+          <svg class="icone" aria-hidden="true"><use href="#i-lista" /></svg><span>Histórico</span>
+        </button>
+        <button class="aba" data-aba="autorizados" type="button">
+          <svg class="icone" aria-hidden="true"><use href="#i-pessoas" /></svg><span>Autorizados</span>
+        </button>
+      </nav>
+
+      <div class="utilizador">
+        <span id="utilizador-email" class="utilizador__email"></span>
+        <button class="btn btn--discreto" id="btn-sair" type="button">Sair</button>
+      </div>
+    </header>
+
+    <div id="faixa-demo" class="faixa-demo" hidden>
+      <span>Modo demonstração: dados fictícios guardados neste navegador.</span>
+      <button class="link" id="btn-repor" type="button">Repor dados</button>
+    </div>
+
+    <main id="principal" tabindex="-1">
+      <!-- Registar -->
+      <section id="aba-registar" class="aba-painel" aria-labelledby="t-registar">
+        <div class="cabecalho-pagina">
+          <h1 id="t-registar">Portaria</h1>
+          <p id="data-hoje" class="muted"></p>
+        </div>
+
+        <dl class="quadro" aria-label="Resumo de hoje">
+          <div class="quadro__item"><dt>Entradas</dt><dd id="n-entradas">0</dd></div>
+          <div class="quadro__item"><dt>Saídas</dt><dd id="n-saidas">0</dd></div>
+          <div class="quadro__item quadro__item--destaque"><dt>Dentro agora</dt><dd id="n-presentes">0</dd></div>
+          <div class="quadro__item" id="quadro-sem-aut"><dt>Sem autorização</dt><dd id="n-sem-aut">0</dd></div>
+        </dl>
+
+        <div class="duas-colunas">
+          <form id="form-registo" class="cartao" novalidate autocomplete="off">
+            <h2>Novo registo</h2>
+
+            <fieldset class="tipo">
+              <legend class="so-leitor">Tipo de movimento</legend>
+              <input type="radio" name="tipo" id="tipo-entrada" value="entrada" checked />
+              <label for="tipo-entrada"><svg class="icone" aria-hidden="true"><use href="#i-entrada" /></svg>Entrada</label>
+              <input type="radio" name="tipo" id="tipo-saida" value="saida" />
+              <label for="tipo-saida"><svg class="icone" aria-hidden="true"><use href="#i-saida" /></svg>Saída</label>
+            </fieldset>
+
+            <div class="campo">
+              <label for="reg-nome">Nome</label>
+              <input id="reg-nome" name="nome" type="text" list="lista-nomes" autocapitalize="words" required aria-describedby="estado-nome" />
+              <datalist id="lista-nomes"></datalist>
+              <div id="estado-nome" class="estados" aria-live="polite"></div>
+            </div>
+
+            <div class="campo">
+              <label for="reg-placa">Placa do veículo <span class="muted">(opcional)</span></label>
+              <div class="placa">
+                <input id="reg-placa" name="placa" type="text" maxlength="10" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="00-AA-00" aria-describedby="erro-placa" />
+              </div>
+              <p id="erro-placa" class="erro" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label for="reg-obs">Observação <span class="muted">(opcional)</span></label>
+              <input id="reg-obs" name="observacao" type="text" maxlength="200" placeholder="Ex.: 2 pessoas no carro" />
+            </div>
+
+            <button class="btn btn--entrada btn--bloco btn--grande" type="submit" id="btn-registar">Registar entrada</button>
+          </form>
+
+          <div class="coluna">
+            <section class="cartao" aria-labelledby="t-dentro">
+              <h2 id="t-dentro">Dentro agora</h2>
+              <ul id="lista-dentro" class="lista"></ul>
+            </section>
+            <section class="cartao" aria-labelledby="t-ultimos">
+              <h2 id="t-ultimos">Últimos registos</h2>
+              <ul id="lista-ultimos" class="lista"></ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- Histórico -->
+      <section id="aba-historico" class="aba-painel" aria-labelledby="t-historico" hidden>
+        <div class="cabecalho-pagina">
+          <h1 id="t-historico">Histórico</h1>
+          <div class="acoes">
+            <button class="btn btn--secundario" id="btn-csv" type="button"><svg class="icone" aria-hidden="true"><use href="#i-baixar" /></svg>Exportar CSV</button>
+            <button class="btn btn--secundario" id="btn-imprimir" type="button"><svg class="icone" aria-hidden="true"><use href="#i-imprimir" /></svg>Imprimir relatório</button>
+          </div>
+        </div>
+
+        <form class="filtros" id="filtros" onsubmit="return false">
+          <div class="campo">
+            <label for="f-dia">Dia</label>
+            <input id="f-dia" type="date" />
+          </div>
+          <div class="campo">
+            <label for="f-tipo">Tipo</label>
+            <select id="f-tipo">
+              <option value="">Todos</option>
+              <option value="entrada">Entradas</option>
+              <option value="saida">Saídas</option>
+            </select>
+          </div>
+          <div class="campo campo--largo">
+            <label for="f-busca">Procurar</label>
+            <input id="f-busca" type="search" placeholder="Nome, placa ou observação" />
+          </div>
+        </form>
+        <p id="historico-contagem" class="muted" aria-live="polite"></p>
+
+        <div class="tabela-caixa">
+          <table class="tabela">
+            <thead>
+              <tr><th>Hora</th><th>Movimento</th><th>Nome</th><th>Placa</th><th>Observação</th><th>Registado por</th></tr>
+            </thead>
+            <tbody id="corpo-historico"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Autorizados -->
+      <section id="aba-autorizados" class="aba-painel" aria-labelledby="t-autorizados" hidden>
+        <div class="cabecalho-pagina">
+          <h1 id="t-autorizados">Autorizados</h1>
+          <div class="acoes">
+            <button class="btn btn--secundario" id="btn-importar" type="button"><svg class="icone" aria-hidden="true"><use href="#i-subir" /></svg>Importar JSON</button>
+            <input id="ficheiro-importar" type="file" accept="application/json,.json" hidden />
+          </div>
+        </div>
+
+        <form id="form-autorizado" class="cartao cartao--linha" novalidate autocomplete="off">
+          <div class="campo">
+            <label for="aut-nome">Nome</label>
+            <input id="aut-nome" type="text" required />
+          </div>
+          <div class="campo">
+            <label for="aut-empresa">Empresa</label>
+            <input id="aut-empresa" type="text" />
+          </div>
+          <button class="btn btn--primario" type="submit">Adicionar</button>
+        </form>
+
+        <div class="campo campo--busca">
+          <label for="aut-busca">Procurar na lista</label>
+          <input id="aut-busca" type="search" />
+        </div>
+        <p id="autorizados-contagem" class="muted" aria-live="polite"></p>
+        <ul id="lista-autorizados" class="lista lista--autorizados"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Relatório para impressão (só aparece ao imprimir) -->
+  <section id="relatorio" class="relatorio" aria-hidden="true"></section>
+
+  <dialog id="dialogo" aria-labelledby="dlg-titulo">
+    <form method="dialog">
+      <h2 id="dlg-titulo" data-titulo></h2>
+      <p data-mensagem></p>
+      <div class="dialogo__acoes">
+        <button class="btn btn--secundario" value="nao" data-nao></button>
+        <button class="btn btn--primario" value="ok" data-ok></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <noscript><p class="nota" style="padding:1rem">Esta aplicação precisa de JavaScript.</p></noscript>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

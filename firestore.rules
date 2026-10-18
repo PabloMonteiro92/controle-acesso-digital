@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// Regras de exemplo para o modo Firebase. Publique-as na consola do Firestore.
+// Princípios: só utilizadores autenticados; os registos são apenas de acréscimo
+// (ninguém edita nem apaga, o que preserva a rastreabilidade).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    match /registros/{id} {
+      allow read: if autenticado();
+      allow create: if autenticado()
+        && request.resource.data.keys().hasOnly(
+             ['nome', 'placa', 'tipo', 'observacao', 'usuario', 'autorizado', 'ts', 'criadoEm'])
+        && request.resource.data.tipo in ['entrada', 'saida']
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() > 0
+        && request.resource.data.nome.size() <= 120
+        && request.resource.data.usuario == request.auth.token.email;
+      allow update, delete: if false;
+    }
+
+    match /autorizados/{id} {
+      allow read, write: if autenticado();
+    }
+  }
+}

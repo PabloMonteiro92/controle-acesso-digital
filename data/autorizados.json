@@ -1,0 +1,20 @@
+[
+  { "nome": "Ana Ribeiro", "empresa": "Transportes Alfa" },
+  { "nome": "Bruno Carvalho", "empresa": "Transportes Alfa" },
+  { "nome": "Carla Mendes", "empresa": "Transportes Alfa" },
+  { "nome": "Diogo Fernandes", "empresa": "Transportes Alfa" },
+  { "nome": "Eduarda Lopes", "empresa": "Transportes Alfa" },
+  { "nome": "Filipe Antunes", "empresa": "Construções Beta" },
+  { "nome": "Graça Moreira", "empresa": "Construções Beta" },
+  { "nome": "Hugo Teixeira", "empresa": "Construções Beta" },
+  { "nome": "Inês Valente", "empresa": "Construções Beta" },
+  { "nome": "João Pacheco", "empresa": "Construções Beta" },
+  { "nome": "Lara Nogueira", "empresa": "Manutenção Gama" },
+  { "nome": "Miguel Seabra", "empresa": "Manutenção Gama" },
+  { "nome": "Nuno Albuquerque", "empresa": "Manutenção Gama" },
+  { "nome": "Olívia Sampaio", "empresa": "Manutenção Gama" },
+  { "nome": "Paulo Esteves", "empresa": "Limpezas Delta" },
+  { "nome": "Rita Cardoso", "empresa": "Limpezas Delta" },
+  { "nome": "Sérgio Matos", "empresa": "Limpezas Delta" },
+  { "nome": "Teresa Faria", "empresa": "Limpezas Delta" }
+]
