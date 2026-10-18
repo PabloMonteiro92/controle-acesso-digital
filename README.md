@@ -133,7 +133,7 @@ Cobrem a lógica que mais importa: normalização de nomes, validação de placa
 
 ## Autor
 
-**Pablo Monteiro** · [GitHub](https://github.com/PabloMonteiro92) · [Portfólio](https://pablo-monteiro-portfolio.netlify.app)
+**Pablo Monteiro** · [GitHub](https://github.com/PabloMonteiro92) · [Portfólio](https://pablomonteiro92.github.io/pablo-monteiro-developer/)
 
 Projeto de portfólio, em transição para cibersegurança (SOC, AppSec e Blue Team). Esta aplicação reflete esse caminho: autenticação sem registo aberto, regras de acesso mínimas, registos imutáveis, validação de entradas e exportação protegida.
 
